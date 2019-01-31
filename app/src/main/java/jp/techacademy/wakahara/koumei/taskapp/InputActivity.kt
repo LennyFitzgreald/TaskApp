@@ -143,7 +143,7 @@ class InputActivity : AppCompatActivity() {
 
         realm.close()
 
-        // 通知用
+        // 通知
         val resultIntent = Intent(applicationContext, TaskAlarmReciever::class.java)
         resultIntent.putExtra(EXTRA_TASK, mTask!!.id)
         val resultPendingIntent = PendingIntent.getBroadcast(

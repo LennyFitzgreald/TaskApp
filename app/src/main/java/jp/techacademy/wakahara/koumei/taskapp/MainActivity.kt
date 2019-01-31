@@ -94,13 +94,13 @@ class MainActivity : AppCompatActivity() {
 
         // ＊課題追加：絞り込みボタンを押し下げた時の処理
         filter_button.setOnClickListener{
-            if (edit_text.text != null){
+            if (edit_text.text.isBlank()){
+                reloadListView()
+            } else {
                 val filterResults = mRealm.where(Task::class.java).equalTo("category", edit_text.text.toString()).findAll()
                 mTaskAdapter.taskList = mRealm.copyFromRealm(filterResults)
                 listView1.adapter = mTaskAdapter
                 mTaskAdapter.notifyDataSetChanged()
-            } else {
-                reloadListView()
             }
         }
 
