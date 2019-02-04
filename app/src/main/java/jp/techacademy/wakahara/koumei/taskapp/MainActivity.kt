@@ -2,17 +2,17 @@ package jp.techacademy.wakahara.koumei.taskapp
 
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity;
+import android.view.View
+import android.widget.AdapterView
+import android.widget.Spinner
 import io.realm.Realm
 import io.realm.RealmChangeListener
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 const val EXTRA_TASK = "jp.techacademy.wakahara.koumei.taskapp.Task"
 
@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val mRealmListener = object : RealmChangeListener<Realm> {
         override fun onChange(element: Realm) {
             reloadListView()
+            reloadSpinner() //!
         }
     }
 
@@ -92,9 +93,10 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+/*
         // ＊課題追加：絞り込みボタンを押し下げた時の処理
-        filter_button.setOnClickListener{
-            if (edit_text.text.isBlank()){
+        filter_button.setOnClickListener {
+            if (edit_text.text.isBlank()) {
                 reloadListView()
             } else {
                 val filterResults = mRealm.where(Task::class.java).equalTo("category", edit_text.text.toString()).findAll()
@@ -103,9 +105,23 @@ class MainActivity : AppCompatActivity() {
                 mTaskAdapter.notifyDataSetChanged()
             }
         }
+*/
+        // リスナーを登録
+        category_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            //　アイテムが選択された時
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val spinnerParent = parent as Spinner
+                val item = spinnerParent.selectedItem as Category
+                val filterResults = mRealm.where(Task::class.java).equalTo("category.id", item.id).findAll()
+                mTaskAdapter.taskList = mRealm.copyFromRealm(filterResults)
+                mTaskAdapter.notifyDataSetChanged()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
 
-
+        }
         reloadListView()
+        reloadSpinner() //!
     }
 
     private fun reloadListView() {
@@ -120,6 +136,19 @@ class MainActivity : AppCompatActivity() {
 
         // 表示を更新するために、アダプターにデータが変更されたことを知らせる
         mTaskAdapter.notifyDataSetChanged()
+    }
+
+    private fun reloadSpinner() {
+        val categoryAdapter = CategoryAdapter(this)
+
+        // Realmデータベースから全カテゴリを取得
+        val categoryRealmResults = mRealm.where(Category::class.java).findAll()
+        // 上記の結果を、CategoryList としてセットする
+        categoryAdapter.categoryList = mRealm.copyFromRealm(categoryRealmResults)
+        // spinnerのアダプタに渡す
+        category_spinner.adapter = categoryAdapter
+        // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+        categoryAdapter.notifyDataSetChanged()
     }
 
     override fun onDestroy() {

@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.DatePickerDialog
 import android.app.PendingIntent
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -88,7 +87,7 @@ class InputActivity : AppCompatActivity() {
             // 更新の場合
             title_edit_text.setText(mTask!!.title)
             content_edit_text.setText(mTask!!.contents)
-            category_edit_text.setText(mTask!!.category) //課題追加
+            //category_edit_text.setText(mTask!!.category) //課題追加
 
             val calendar = Calendar.getInstance()
             calendar.time = mTask!!.date
@@ -105,6 +104,28 @@ class InputActivity : AppCompatActivity() {
             date_button.text = dateString
             times_button.text = timeString
         }
+
+        category_button.setOnClickListener {
+            val intent = Intent(this@InputActivity, CategoryInputActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val realm = Realm.getDefaultInstance()
+        val categoryAdapter = CategoryAdapter(this)
+
+        // Realmデータベースから全カテゴリを取得
+        val categoryRealmResults = realm.where(Category::class.java).findAll()
+        // 上記の結果を、CategoryList としてセットする
+        categoryAdapter.categoryList = realm.copyFromRealm(categoryRealmResults)
+        // spinnerのアダプタに渡す
+        category_spinner.adapter = categoryAdapter
+        // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+        categoryAdapter.notifyDataSetChanged()
+
+        realm.close()
     }
 
     private fun addTask() {
@@ -129,11 +150,11 @@ class InputActivity : AppCompatActivity() {
 
         val title = title_edit_text.text.toString()
         val content = content_edit_text.text.toString()
-        val category = category_edit_text.text.toString() // 課題追加
+        //val category = category_edit_text.text.toString() // 課題追加
 
         mTask!!.title = title
         mTask!!.contents = content
-        mTask!!.category = category // 課題追加
+        mTask!!.category = category_spinner.selectedItem as Category // 課題追加
         val calendar = GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute)
         val date = calendar.time
         mTask!!.date = date

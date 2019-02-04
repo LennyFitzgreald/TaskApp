@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingTop="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <EditText
+        android:id="@+id/category_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="カテゴリ名を入力してください" />
+
+    <Button
+        android:id="@+id/ok_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/category_edit_text"
+        android:text="OK" />
+
+</RelativeLayout>

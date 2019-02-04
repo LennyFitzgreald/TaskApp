@@ -11,23 +11,21 @@
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-    <EditText
-            android:id="@+id/edit_text"
-            android:hint="カテゴリ名で絞り込むことができます"
+    <Spinner
+            android:id="@+id/category_spinner"
             android:textSize="12dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/filter_button"/>
+            android:layout_height="wrap_content" />
 
+        <!--
     <Button
             android:id="@+id/filter_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:textSize="12dp"
-            android:text="絞り込み"
-            />
-
+            android:text="絞り込み"/>
+-->
     </RelativeLayout>
 
     <ListView

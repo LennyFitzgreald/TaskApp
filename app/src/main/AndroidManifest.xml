@@ -34,6 +34,11 @@
 
         <receiver android:name=".TaskAlarmReciever"/>
 
+        <activity
+                android:name=".CategoryInputActivity"
+                android:label="カテゴリ"
+                android:parentActivityName=".InputActivity">
+        </activity>
     </application>
 
 </manifest>
