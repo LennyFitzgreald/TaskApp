@@ -7,6 +7,7 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.Toolbar
 import android.view.View
 import io.realm.Realm
@@ -46,10 +47,14 @@ class InputActivity : AppCompatActivity() {
         )
         timePickerDialog.show()
     }
-
-    private val mOnDoneClickListener = View.OnClickListener {
-        addTask()
-        finish()
+    // 決定ボタン　発展課題用追加　カテゴリに何も入っていないときにはカテゴリ入力を促す
+    private val mOnDoneClickListener = View.OnClickListener { view ->
+        if (category_spinner.count == 0) {
+            Snackbar.make(view, "カテゴリを入力してください", Snackbar.LENGTH_LONG).show()
+        } else {
+            addTask()
+            finish()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +72,8 @@ class InputActivity : AppCompatActivity() {
         date_button.setOnClickListener(mOnDateClickListener)
         times_button.setOnClickListener(mOnTimeClickListener)
         done_button.setOnClickListener(mOnDoneClickListener)
+
+
 
         // EXTRA_TASK から Task の id を取得して、 id から Task のインスタンスを取得する
         val intent = intent
@@ -110,9 +117,9 @@ class InputActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
-    override fun onStart() {
-        super.onStart()
+    //ルートによってはonStartを通らないので、必ず通るonResumeに記述
+    override fun onResume() {
+        super.onResume()
         val realm = Realm.getDefaultInstance()
         val categoryAdapter = CategoryAdapter(this)
 
@@ -124,6 +131,11 @@ class InputActivity : AppCompatActivity() {
         category_spinner.adapter = categoryAdapter
         // 表示を更新するために、アダプターにデータが変更されたことを知らせる
         categoryAdapter.notifyDataSetChanged()
+
+        // ＊＊選択されたタスクのカテゴリを表示
+        if (mTask != null) {
+            category_spinner.setSelection(mTask!!.category!!.id)
+        }
 
         realm.close()
     }
@@ -154,7 +166,13 @@ class InputActivity : AppCompatActivity() {
 
         mTask!!.title = title
         mTask!!.contents = content
-        mTask!!.category = category_spinner.selectedItem as Category // 課題追加
+        mTask!!.category = category_spinner.selectedItem as Category //as? Category // 課題追加 発展課題追加if文
+//        if (mTask!!.category == null) {
+//            val view = findViewById<View>(android.R.id.content)
+//            Snackbar.make(view, "カテゴリを入力してください", Snackbar.LENGTH_LONG).show()
+//            realm.commitTransaction()
+//            return
+//        }
         val calendar = GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute)
         val date = calendar.time
         mTask!!.date = date
